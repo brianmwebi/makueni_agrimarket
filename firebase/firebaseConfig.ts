@@ -11,22 +11,7 @@ const firebaseConfig: FirebaseOptions = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Ensure configuration values are not undefined
 
-// if (
-//   !firebaseConfig.apiKey ||
-//   !firebaseConfig.authDomain ||
-//   !firebaseConfig.projectId ||
-//   !firebaseConfig.storageBucket ||
-//   !firebaseConfig.messagingSenderId ||
-//   !firebaseConfig.appId
-// ) {
-//   throw new Error(
-//     "Missing Firebase environment variables. Check your .env.local file."
-//   );
-// }
-
-// Initialize Firebase app
 const firebaseApp = initializeApp(firebaseConfig);
 
 export default firebaseApp;
