@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useRouter } from "next/router";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import firebaseApp from "@/firebase/firebaseConfig"; // Adjust the import path to your firebaseConfig file
 
@@ -10,6 +11,7 @@ const Registration = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleRegistration = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -23,10 +25,16 @@ const Registration = () => {
     setLoading(true);
     try {
       await createUserWithEmailAndPassword(auth, email, password);
-      alert("Registration successful! Please log in.");
-      // Optionally, redirect to the login page
+      alert("Registration successful! Redirecting to login...");
+      router.push("/login"); // Redirect to the login page
     } catch (error: any) {
-      setError(error.message || "Failed to register. Please try again.");
+      const errorMessage =
+        error.code === "auth/email-already-in-use"
+          ? "This email is already in use. Please use another one."
+          : error.code === "auth/invalid-email"
+          ? "Invalid email address format."
+          : "Failed to register. Please try again.";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -51,6 +59,7 @@ const Registration = () => {
               onChange={(e) => setEmail(e.target.value)}
               required
               className="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"
+              placeholder="Enter your email"
             />
           </div>
 
@@ -67,6 +76,7 @@ const Registration = () => {
               required
               minLength={6}
               className="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"
+              placeholder="Enter your password"
             />
           </div>
 
@@ -83,12 +93,17 @@ const Registration = () => {
               required
               minLength={6}
               className="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"
+              placeholder="Confirm your password"
             />
           </div>
 
           {/* Error Message */}
           {error && (
-            <div className="text-red-500 text-sm">
+            <div
+              className="text-red-500 text-sm"
+              role="alert"
+              aria-live="polite"
+            >
               {error}
             </div>
           )}
@@ -106,6 +121,18 @@ const Registration = () => {
             </button>
           </div>
         </form>
+
+        <div className="mt-4 text-center">
+          <p className="text-gray-600">
+            Already have an account?{" "}
+            <a
+              href="/login"
+              className="text-green-600 hover:underline font-semibold"
+            >
+              Login here
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   );
